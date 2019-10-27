@@ -8,6 +8,7 @@ object LightningClient extends App {
   val path = "/var/lib/docker/volumes/generated_clightning_bitcoin_datadir/_data/lightning-rpc"
   val client = new UnixDomainSocket(path)
 
+
   val out = new PrintWriter(client.getOutputStream, true)
   val in = new BufferedReader(new InputStreamReader(client.getInputStream))
 
@@ -16,7 +17,7 @@ object LightningClient extends App {
   def requestParam(command: String, params: String) = {
 
     id += 1
-  s"""{ "method": "$command", "params": "$params", "id": $id }"""
+  s"""{ "method": "$command", "params": "$params", "id": "$id" }"""
 
   }
 
@@ -36,7 +37,12 @@ object LightningClient extends App {
     send("getinfo", "{}")
   }
 
- getInfo
+ try {
+
+   send("getinfo", "")
+   send("getinfo", "[]")
+   send("getinfo", "{}")
+ }
 
 
 
