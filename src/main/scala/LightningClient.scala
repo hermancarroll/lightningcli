@@ -36,7 +36,9 @@ object LightningClient extends App {
     send("getinfo", "{}")
   }
 
- // getInfo
+ getInfo
+
+
 
 
 }
