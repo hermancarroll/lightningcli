@@ -6,7 +6,7 @@ import spray.json.DefaultJsonProtocol
 import spray.json._
 import DefaultJsonProtocol._
 
-case class GetInfo(command: String = "getinfo", params: Array[String] = Array.empty, id: Int)
+case class GetInfo(method: String = "getinfo", params: Array[String] = Array.empty, id: Int)
 
 object MyJsonProtocol extends DefaultJsonProtocol {
   implicit val getinfoFormat: RootJsonFormat[GetInfo] = jsonFormat3(GetInfo)
@@ -32,7 +32,7 @@ object LightningClient extends App {
   def getInfo(method : String = "getinfo") = {
 
     id += 1
-    val info = GetInfo(id = id)
+    val info = GetInfo(method = method,id = id)
     println(info.toJson)
     info.toJson.prettyPrint
     out.println(info.toJson)
