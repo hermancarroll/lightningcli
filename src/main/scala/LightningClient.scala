@@ -42,8 +42,10 @@ object LightningClient extends App {
 
   }
 
+  getInfo("getinfo")
   getInfo("help")
-  getInfo()
+  getInfo("listpeers")
+  getInfo("listinvoices")
 
 
 
