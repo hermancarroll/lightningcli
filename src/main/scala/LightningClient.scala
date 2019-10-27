@@ -1,8 +1,22 @@
 import java.io.{BufferedReader, InputStreamReader, PrintWriter}
 
 import org.scalasbt.ipcsocket.UnixDomainSocket
+import spray.json.DefaultJsonProtocol
+
+import spray.json._
+import DefaultJsonProtocol._
+
+case class GetInfo(command: String = "getinfo", params: Array[String] = Array.empty, id: Int)
+
+object MyJsonProtocol extends DefaultJsonProtocol {
+  implicit val getinfoFormat: RootJsonFormat[GetInfo] = jsonFormat3(GetInfo)
+}
+
 
 object LightningClient extends App {
+
+
+  import MyJsonProtocol._
 
 
   val path = "/var/lib/docker/volumes/generated_clightning_bitcoin_datadir/_data/lightning-rpc"
@@ -13,37 +27,22 @@ object LightningClient extends App {
   val in = new BufferedReader(new InputStreamReader(client.getInputStream))
 
 
-  var id = 0
-  def requestParam(command: String, params: String) = {
+  var id = -1
+
+  def getInfo = {
 
     id += 1
-  s"""{ "method": "$command", "params": "$params", "id": "$id" }"""
-
-  }
-
-
-  def send(command: String, params: String) = {
-
-    val r = requestParam(command, params)
-    out.println(r)
+    val info = GetInfo(id = id)
+    out.println(info.toJson)
     val line = in.readLine
     println(line)
 
 
   }
 
-  def getInfo = {
+  getInfo
 
-    send("getinfo", "{}")
-  }
-
- try {
-
-   send("getinfo", "")
-   send("getinfo", "[]")
-   send("getinfo", "{}")
- }
-
+  getInfo
 
 
 
