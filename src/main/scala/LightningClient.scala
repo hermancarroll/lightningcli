@@ -29,7 +29,7 @@ object LightningClient extends App {
 
   var id = -1
 
-  def getInfo = {
+  def getInfo(method : String = "getinfo") = {
 
     id += 1
     val info = GetInfo(id = id)
@@ -42,9 +42,9 @@ object LightningClient extends App {
 
   }
 
-  getInfo
+  getInfo("help")
+  getInfo()
 
-  getInfo
 
 
 
