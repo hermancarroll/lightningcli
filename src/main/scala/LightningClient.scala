@@ -33,6 +33,8 @@ object LightningClient extends App {
 
     id += 1
     val info = GetInfo(id = id)
+    println(info.toJson)
+    info.toJson.prettyPrint
     out.println(info.toJson)
     val line = in.readLine
     println(line)
