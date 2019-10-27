@@ -4,6 +4,7 @@ import org.scalasbt.ipcsocket.UnixDomainSocket
 
 object LightningClient extends App {
 
+
   val path = "/var/lib/docker/volumes/generated_clightning_bitcoin_datadir/_data/lightning-rpc"
   val client = new UnixDomainSocket(path)
 
@@ -15,13 +16,7 @@ object LightningClient extends App {
   def requestParam(command: String, params: String) = {
 
     id += 1
-  s"""
-    |{
-    |    method: $command,
-    |    params: $params,
-    |    id: $id
-    |  }
-  """.stripMargin
+  s"""{ "method": "$command", "params": "$params", "id": $id }"""
 
   }
 
@@ -41,6 +36,7 @@ object LightningClient extends App {
     send("getinfo", "{}")
   }
 
-  getInfo
+ // getInfo
+
 
 }
