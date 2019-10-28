@@ -6,7 +6,7 @@ import spray.json.DefaultJsonProtocol
 import spray.json._
 import DefaultJsonProtocol._
 
-case class Request(method: String, params: Array[String] = Array.empty[String], id: Int)
+case class Request(method: String, id: Int, params: Seq[String] = Seq.empty[String])
 
 object MyJsonProtocol extends DefaultJsonProtocol {
   implicit val getinfoFormat: RootJsonFormat[Request] = jsonFormat3(Request)
@@ -52,29 +52,31 @@ case class ListPayments(id: Int, response: Payments) extends Response[Payments]
 case class PayResponse(id: Int, response: ResultBis) extends Response[ResultBis]
 
 
-object LightningClient extends App {
+class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightning_bitcoin_datadir/_data/lightning-rpc") {
 
 
   import MyJsonProtocol._
 
+  private val atom = new AtomicInteger()
+  private val client = new UnixDomainSocket(path)
+  private val in = new BufferedReader(new InputStreamReader(client.getInputStream))
+  private val out = new PrintWriter(client.getOutputStream, true)
 
-  val path = "/var/lib/docker/volumes/generated_clightning_bitcoin_datadir/_data/lightning-rpc"
-
-  val atom = new AtomicInteger()
-  val client = new UnixDomainSocket(path)
-  val in = new BufferedReader(new InputStreamReader(client.getInputStream))
-  val out = new PrintWriter(client.getOutputStream, true)
-
-  def send(method : String, params: Array[String] = Array.empty[String]) = {
+  def send(method : String, params: String*) = {
 
     val id = atom.getAndIncrement()
-    val info = Request(method = method, id = id, params = params)
+    val info = Request(method = method, id = id, params = params.toSeq)
     println(info.toJson.prettyPrint)
+
     out.println(info.toJson)
 
     val line = in.readLine
     println(line)
 
+  }
+
+  def close = {
+    client.close()
   }
 
 
@@ -84,9 +86,21 @@ object LightningClient extends App {
 
 //  send("getinfo")
 //  send("help")
-  //send("pay", Array("lntb100n1pwmv0wdpp5jse9v4pvwywwt7xucvzmnrzr8dlwm7t0tx9c38juncvus02yapxqdqqcqzpgxqyz5vqcn36xtue6yzcmf9nr70h6n0uhfsg6jwc320w66r9hh6zsymqyeh9jwkdqge5u2slpqjdw8j8kggrn3re68pw7ysylxvrt3f9tdf9c0gp4vrfxr"))
-
-  send("listpayments", Array("lntb100n1pwmv0wdpp5jse9v4pvwywwt7xucvzmnrzr8dlwm7t0tx9c38juncvus02yapxqdqqcqzpgxqyz5vqcn36xtue6yzcmf9nr70h6n0uhfsg6jwc320w66r9hh6zsymqyeh9jwkdqge5u2slpqjdw8j8kggrn3re68pw7ysylxvrt3f9tdf9c0gp4vrfxr"))
+  //send("pay", Seq("lntb100n1pwmv0wdpp5jse9v4pvwywwt7xucvzmnrzr8dlwm7t0tx9c38juncvus02yapxqdqqcqzpgxqyz5vqcn36xtue6yzcmf9nr70h6n0uhfsg6jwc320w66r9hh6zsymqyeh9jwkdqge5u2slpqjdw8j8kggrn3re68pw7ysylxvrt3f9tdf9c0gp4vrfxr"))
 
 
+
+}
+
+
+object LightningClientApp extends App {
+
+  val client = new LightningClient()
+
+  client.send("pay", "lntb100n1pwmvnwspp5qe5jtqym2nfexgvzawcsjhejyjqkgcvq305nywz8m5edsle7gghqdqqcqzpgxqyz5vqz7taykkfas4gszlqj6sh3tmht03le4q3uc988xdfnpkyejkrnrwztlm8lluccfn7kr4330dylxkzn58d2s5f07zq9cpnhwvq07nla2cq6de2z0")
+  client.send("listpayments", "lntb100n1pwmv0wdpp5jse9v4pvwywwt7xucvzmnrzr8dlwm7t0tx9c38juncvus02yapxqdqqcqzpgxqyz5vqcn36xtue6yzcmf9nr70h6n0uhfsg6jwc320w66r9hh6zsymqyeh9jwkdqge5u2slpqjdw8j8kggrn3re68pw7ysylxvrt3f9tdf9c0gp4vrfxr")
+  client.send("listpayments", "lntb100n1pwmv0wdpp5jse9v4pvwywwt7xucvzmnrzr8dlwm7t0tx9c38juncvus02yapxqdqqcqzpgxqyz5vqcn36xtue6yzcmf9nr70h6n0uhfsg6jwc320w66r9hh6zsymqyeh9jwkdqge5u2slpqjdw8j8kggrn3re68pw7ysylxvrt3f9tdf9c0gp4vrfxr", "lntb100n1pwmvnwspp5qe5jtqym2nfexgvzawcsjhejyjqkgcvq305nywz8m5edsle7gghqdqqcqzpgxqyz5vqz7taykkfas4gszlqj6sh3tmht03le4q3uc988xdfnpkyejkrnrwztlm8lluccfn7kr4330dylxkzn58d2s5f07zq9cpnhwvq07nla2cq6de2z0")
+
+  client.close
+  sys.exit(0)
 }
