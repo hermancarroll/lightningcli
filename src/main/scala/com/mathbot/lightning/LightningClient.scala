@@ -7,6 +7,7 @@ import org.scalasbt.ipcsocket.UnixDomainSocket
 import spray.json._
 
 import scala.collection.immutable.List
+import scala.concurrent.duration.Duration
 
 
 
@@ -30,20 +31,20 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
 
   }
 
-  def call(method: String, params: JsObject) = {
-
-    val id = atom.getAndIncrement()
-    val info = JsObject(
-      "method" -> JsString(method),
-      "id" -> JsNumber(id),
-      "params" -> params
-    )
-    println(info.toJson.prettyPrint)
-    out.println(info.toJson)
-    val line = in.readLine
-    println(line)
-    line
-  }
+//  def call(method: String, params: JsObject): String = {
+//
+//    val id = atom.getAndIncrement()
+//    val info = JsObject(
+//      "method" -> JsString(method),
+//      "id" -> JsNumber(id),
+//      "params" -> params
+//    )
+//    println(info.toJson.prettyPrint)
+//    out.println(info.toJson)
+//    val line = in.readLine
+//    println(line)
+//    line
+//  }
 
   /**
     * Sets up automatic cleaning of expired invoices. {cycle_seconds} sets
@@ -53,12 +54,8 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
     * @param cycleSeconds
     * @param expiredBy
     */
-  def autocleaninvoice(cycleSeconds: Option[Int], expiredBy: Option[Int]) = {
-    call("autocleaninvoice", JsObject(
-      "cycle_seconds" -> cycleSeconds.map(JsNumber(_)).getOrElse(JsNull),
-      "expired_by" -> expiredBy.map(JsNumber(_)).getOrElse(JsNull)
-    ))
-  }
+  def autoCleanInvoice(cycleSeconds: Int = 3600, expiredBy: Int = 86400): String =
+    call("autocleaninvoice", cycleSeconds.toString, expiredBy.toString)
 
   def pay(bolt11: String): String =
     call("pay", bolt11)
@@ -66,19 +63,41 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
 
   def listPayments(bol11: String) : String  = listPayments(Some(bol11))
 
+  /**
+    * Show outgoing payments, regarding {bolt11} or {payment_hash} if set
+    * @param bolt11
+    * @return
+    */
   def listPayments(bolt11: Option[String]): String =
     call("listpayments", bolt11 getOrElse Array.empty)
 
-  def listTransactions = call("listtransactions")
+  /**
+    * Show wallet history
+    * @return
+    */
+  def listTransactions: String = call("listtransactions")
 
   /**
     * Show invoice {label} (or all, if no {label))
     * @param invoice
     * @return
     */
-  def listInvoices(invoice: Option[String]) = call("listinvoices", invoice getOrElse Array.empty)
+  def listInvoices(invoice: Option[String]): String = call("listinvoices", invoice getOrElse Array.empty)
 
 
+  /**
+    * Show route to {id} for {msatoshi}, using {riskfactor} and optional {cltv} (default 9). If specified search from {fromid} otherwise use this node as source. Randomize the route with up to {fuzzpercent} (default 5.0). {exclude} an array of short-channel-id/direction (e.g. [ '564334x877x1/0', '564195x1292x0/1' ]) from consideration. Set the {maxhops} the route can take (default 20).
+    */
+  // def getRoute(id: String, msatoshi: Long, riskFactor: Any, cltv: Option[Int], fromId )
+  /**
+    * Get a new {bech32, p2sh-segwit} (or all) address to fund a channel (default is bech32)
+    * @param addressType
+    * @return
+    */
+  def newAddress(addressType: Option[String]) = {
+
+    call("newaddr", addressType getOrElse Array.empty)
+  }
   /**
     * Show all nodes in our local network view, filter on node {id}
     * if provided
@@ -86,17 +105,36 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
     * @param node
     * @return
     */
-  def listNodes(node: Option[String]) = call("listnodes", node getOrElse Array.empty)
+  def listNodes(node: Option[String]): String = call("listnodes", node getOrElse None)
+
+  /**
+    * Create an invoice for {msatoshi} with {label} and {description} with
+    * optional {expiry} seconds (default 1 week)
+    *
+    * @param msatoshi
+    * @param label
+    * @param description
+    * @param expiry
+    */
+  def invoice(msatoshi: Long, label: String, description: String, expiry: Long = Duration("1 week").toSeconds) =
+    call("invoice", msatoshi.toString, label, description, expiry.toString)
+
+  /**
+    * Show available commands, or just {command} if supplied.
+    * @param command
+    * @return
+    */
+  def help(command: String): String = call("help", command)
 
   def help: String = call("help")
 
   def getinfo: String = call("getinfo")
 
-  def decodePay(bolt11: String) = call("decodepay", bolt11)
+  def decodePay(bolt11: String): String = call("decodepay", bolt11)
 
-  def payStatus(bolt11: Option[String]) = call("paystatus", bolt11 getOrElse Array.empty)
+  def payStatus(bolt11: Option[String]): String = call("paystatus", bolt11 getOrElse Array.empty)
 
-  def setChannelFee(id: Option[String], base: Option[Int], ppm: Option[Int]) = {
+  def setChannelFee(id: Option[String], base: Option[Int], ppm: Option[Int]): String = {
     call("setchannelfee")
   }
 
@@ -111,7 +149,7 @@ object LightningClientApp extends App {
 
   val client = new LightningClient()
 
-  client.autocleaninvoice(None, None)
+  client.autoCleanInvoice()
 
   client.listPayments("lntb100n1pwmv0wdpp5jse9v4pvwywwt7xucvzmnrzr8dlwm7t0tx9c38juncvus02yapxqdqqcqzpgxqyz5vqcn36xtue6yzcmf9nr70h6n0uhfsg6jwc320w66r9hh6zsymqyeh9jwkdqge5u2slpqjdw8j8kggrn3re68pw7ysylxvrt3f9tdf9c0gp4vrfxr")
   client.close()
