@@ -109,9 +109,9 @@ class LightningClient(
     * @param command
     * @return
     */
-  def help(command: String): String = call("help", command)
+  def help(command: Option[String] = None): String = call("help", command)
 
-  def help: String = call("help")
+//  def help: String = call("help")
 
   def getinfo: String = call("getinfo")
 
@@ -123,7 +123,7 @@ class LightningClient(
     call("setchannelfee")
   }
 
-  def listPeers: String = call("listpeers")
+  def listPeers(peerOpt: Option[String] = None): String = call("listpeers", peerOpt)
 
   def close(): Unit =
     client.close()
@@ -140,9 +140,9 @@ object LightningClientApp extends App {
     "lntb10n1pwmjymupp5avukczwr47wxvc9psxw46k0dmuv4t3lpke3xflgwtpjrcz2c6f7sdqqcqzpgxqyz5vqp6f3s2pj2f38safc75jssv6v4f7nfr436253u06dg4rlzn6a55sh7z0d7y549trhvfzzj488pzlenqwr2j3fjllvwgcwt54xclcvlsqpm62yge")
   client.pay(
     "lntb10n1pwmj9d6pp525qz9jduxkwjphkc5xvg7vv6xdyu5s95d0q4n57maes64ft5s6sqdqqcqzpgxqyz5vqnlwyv2zwunl7dc538wh7mgc5g36p92f5afx2926442y5kzp7zvdptu86nldnw5jagguzsurwvmaj7jslauk8zseaqvsdjqwmnrp749qq47fvhn")
-  client.listPeers
+  client.listPeers()
   client.listInvoices()
   client.getinfo
-  client.help
+  client.help()
   client.close()
 }
