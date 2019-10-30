@@ -8,40 +8,27 @@ import spray.json._
 
 import scala.concurrent.duration.Duration
 
-
-
-class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightning_bitcoin_datadir/_data/lightning-rpc") extends MyJsonProtocol {
+class LightningClient(
+    path: String =
+      "/var/lib/docker/volumes/generated_clightning_bitcoin_datadir/_data/lightning-rpc")
+    extends MyJsonProtocol {
 
   private val atom = new AtomicInteger()
 
   private val client = new UnixDomainSocket(path)
-  private val in = new BufferedReader(new InputStreamReader(client.getInputStream))
-  private val out = new PrintWriter(client.getOutputStream, true)
+  private val in     = new BufferedReader(new InputStreamReader(client.getInputStream))
+  private val out    = new PrintWriter(client.getOutputStream, true)
 
+  def call(method: String, paramsOpt: Option[String]): String =
+    paramsOpt.map(call(method, _)) getOrElse call(method)
 
-  def call(method: String, paramsOpt: Option[String]) : String =
-    paramsOpt.map(p => call(method, p)) getOrElse call(method)
-
-  def call(method : String): String = send(Request(method = method, id = atom.getAndIncrement()))
-
-  def call(method : String, params: String*): String =
-    send(RequestWithParams(method = method, id = atom.getAndIncrement(), params = params.toArray))
-
-
-  def send(req: Request) : String = {
+  def call(method: String, params: String*): String = {
+    val req = Request(method = method, id = atom.getAndIncrement(), params = params.toArray)
     out.println(req.toJson)
     val line = in.readLine
     println(line)
     line
   }
-
-  def send(req: RequestWithParams) : String = {
-    out.println(req.toJson)
-    val line = in.readLine
-    println(line)
-    line
-  }
-
 
   /**
     * Sets up automatic cleaning of expired invoices. {cycle_seconds} sets
@@ -57,8 +44,7 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
   def pay(bolt11: String): String =
     call("pay", bolt11)
 
-
-  def listPayments(bol11: String) : String  = listPayments(Some(bol11))
+  def listPayments(bol11: String): String = listPayments(Some(bol11))
 
   /**
     * Show outgoing payments, regarding {bolt11} or {payment_hash} if set
@@ -79,9 +65,8 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
     * @param invoice
     * @return
     */
-  def listInvoices(invoice: Option[String]): String =
+  def listInvoices(invoice: Option[String] = None): String =
     call("listinvoices", invoice)
-
 
   /**
     * Show route to {id} for {msatoshi}, using {riskfactor} and optional {cltv} (default 9). If specified search from {fromid} otherwise use this node as source. Randomize the route with up to {fuzzpercent} (default 5.0). {exclude} an array of short-channel-id/direction (e.g. [ '564334x877x1/0', '564195x1292x0/1' ]) from consideration. Set the {maxhops} the route can take (default 20).
@@ -113,7 +98,10 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
     * @param description
     * @param expiry
     */
-  def invoice(msatoshi: Long, label: String, description: String, expiry: Long = Duration("1 week").toSeconds) =
+  def invoice(msatoshi: Long,
+              label: String,
+              description: String,
+              expiry: Long = Duration("1 week").toSeconds) =
     call("invoice", msatoshi.toString, label, description, expiry.toString)
 
   /**
@@ -135,12 +123,12 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
     call("setchannelfee")
   }
 
+  def listPeers: String = call("listpeers")
+
   def close(): Unit =
     client.close()
 
-
 }
-
 
 object LightningClientApp extends App {
 
@@ -148,12 +136,13 @@ object LightningClientApp extends App {
 
 //  client.autoCleanInvoice()
 
-  client.listPayments("lntb100n1pwmv0wdpp5jse9v4pvwywwt7xucvzmnrzr8dlwm7t0tx9c38juncvus02yapxqdqqcqzpgxqyz5vqcn36xtue6yzcmf9nr70h6n0uhfsg6jwc320w66r9hh6zsymqyeh9jwkdqge5u2slpqjdw8j8kggrn3re68pw7ysylxvrt3f9tdf9c0gp4vrfxr")
+  client.listPayments(
+    "lntb10n1pwmjymupp5avukczwr47wxvc9psxw46k0dmuv4t3lpke3xflgwtpjrcz2c6f7sdqqcqzpgxqyz5vqp6f3s2pj2f38safc75jssv6v4f7nfr436253u06dg4rlzn6a55sh7z0d7y549trhvfzzj488pzlenqwr2j3fjllvwgcwt54xclcvlsqpm62yge")
+  client.pay(
+    "lntb10n1pwmjymupp5avukczwr47wxvc9psxw46k0dmuv4t3lpke3xflgwtpjrcz2c6f7sdqqcqzpgxqyz5vqp6f3s2pj2f38safc75jssv6v4f7nfr436253u06dg4rlzn6a55sh7z0d7y549trhvfzzj488pzlenqwr2j3fjllvwgcwt54xclcvlsqpm62yge")
+  client.listPeers
+  client.listInvoices()
+  client.getinfo
+  client.help
   client.close()
-//  client.call("pay", "lntb10n1pwmjrgkpp537hp9qgvl5rr6cy2g3f8mvnlcjhd8pj4u3xcj9jzqxy52av97kusdqqcqzpgxqyz5vqk3vknl2xjr4n0myv67at277k6z2rgvvh66l85gcv7mmrzd6ac30kekmjn4ej4zu495939te32uwqf2zvzq65464ej7kdx5pzx5wxrugplrhqhe")
-    client.call("listpeers")
-    client.call("listinvoices")
-
-    client.call("getinfo")
-    client.call("help")
 }
