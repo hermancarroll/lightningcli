@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import org.scalasbt.ipcsocket.UnixDomainSocket
 import spray.json._
 
-import scala.collection.immutable.List
 import scala.concurrent.duration.Duration
 
 
@@ -19,32 +18,30 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
   private val in = new BufferedReader(new InputStreamReader(client.getInputStream))
   private val out = new PrintWriter(client.getOutputStream, true)
 
-  def call(method : String, params: String*): String = {
 
-    val id = atom.getAndIncrement()
-    val info = Request(method = method, id = id, params = params.toArray)
-    println(info.toJson.prettyPrint)
-    out.println(info.toJson)
+  def call(method: String, paramsOpt: Option[String]) : String =
+    paramsOpt.map(p => call(method, p)) getOrElse call(method)
+
+  def call(method : String): String = send(Request(method = method, id = atom.getAndIncrement()))
+
+  def call(method : String, params: String*): String =
+    send(RequestWithParams(method = method, id = atom.getAndIncrement(), params = params.toArray))
+
+
+  def send(req: Request) : String = {
+    out.println(req.toJson)
     val line = in.readLine
     println(line)
     line
-
   }
 
-//  def call(method: String, params: JsObject): String = {
-//
-//    val id = atom.getAndIncrement()
-//    val info = JsObject(
-//      "method" -> JsString(method),
-//      "id" -> JsNumber(id),
-//      "params" -> params
-//    )
-//    println(info.toJson.prettyPrint)
-//    out.println(info.toJson)
-//    val line = in.readLine
-//    println(line)
-//    line
-//  }
+  def send(req: RequestWithParams) : String = {
+    out.println(req.toJson)
+    val line = in.readLine
+    println(line)
+    line
+  }
+
 
   /**
     * Sets up automatic cleaning of expired invoices. {cycle_seconds} sets
@@ -69,7 +66,7 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
     * @return
     */
   def listPayments(bolt11: Option[String]): String =
-    call("listpayments", bolt11 getOrElse Array.empty)
+    call("listpayments", bolt11)
 
   /**
     * Show wallet history
@@ -82,7 +79,8 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
     * @param invoice
     * @return
     */
-  def listInvoices(invoice: Option[String]): String = call("listinvoices", invoice getOrElse Array.empty)
+  def listInvoices(invoice: Option[String]): String =
+    call("listinvoices", invoice)
 
 
   /**
@@ -94,10 +92,9 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
     * @param addressType
     * @return
     */
-  def newAddress(addressType: Option[String]) = {
+  def newAddress(addressType: Option[String]) =
+    call("newaddr", addressType)
 
-    call("newaddr", addressType getOrElse Array.empty)
-  }
   /**
     * Show all nodes in our local network view, filter on node {id}
     * if provided
@@ -105,7 +102,7 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
     * @param node
     * @return
     */
-  def listNodes(node: Option[String]): String = call("listnodes", node getOrElse None)
+  def listNodes(node: Option[String]): String = call("listnodes", node)
 
   /**
     * Create an invoice for {msatoshi} with {label} and {description} with
@@ -132,7 +129,7 @@ class LightningClient(path: String = "/var/lib/docker/volumes/generated_clightni
 
   def decodePay(bolt11: String): String = call("decodepay", bolt11)
 
-  def payStatus(bolt11: Option[String]): String = call("paystatus", bolt11 getOrElse Array.empty)
+  def payStatus(bolt11: Option[String]): String = call("paystatus", bolt11)
 
   def setChannelFee(id: Option[String], base: Option[Int], ppm: Option[Int]): String = {
     call("setchannelfee")
@@ -149,15 +146,14 @@ object LightningClientApp extends App {
 
   val client = new LightningClient()
 
-  client.autoCleanInvoice()
+//  client.autoCleanInvoice()
 
   client.listPayments("lntb100n1pwmv0wdpp5jse9v4pvwywwt7xucvzmnrzr8dlwm7t0tx9c38juncvus02yapxqdqqcqzpgxqyz5vqcn36xtue6yzcmf9nr70h6n0uhfsg6jwc320w66r9hh6zsymqyeh9jwkdqge5u2slpqjdw8j8kggrn3re68pw7ysylxvrt3f9tdf9c0gp4vrfxr")
   client.close()
-//  client.call("pay", "lntb100n1pwmvnwspp5qe5jtqym2nfexgvzawcsjhejyjqkgcvq305nywz8m5edsle7gghqdqqcqzpgxqyz5vqz7taykkfas4gszlqj6sh3tmht03le4q3uc988xdfnpkyejkrnrwztlm8lluccfn7kr4330dylxkzn58d2s5f07zq9cpnhwvq07nla2cq6de2z0")
-//  client.call("listpayments",  "lntb100n1pwmvnwspp5qe5jtqym2nfexgvzawcsjhejyjqkgcvq305nywz8m5edsle7gghqdqqcqzpgxqyz5vqz7taykkfas4gszlqj6sh3tmht03le4q3uc988xdfnpkyejkrnrwztlm8lluccfn7kr4330dylxkzn58d2s5f07zq9cpnhwvq07nla2cq6de2z0")
-  //  call("listpeers")
-  //  call("listinvoices")
+//  client.call("pay", "lntb10n1pwmjrgkpp537hp9qgvl5rr6cy2g3f8mvnlcjhd8pj4u3xcj9jzqxy52av97kusdqqcqzpgxqyz5vqk3vknl2xjr4n0myv67at277k6z2rgvvh66l85gcv7mmrzd6ac30kekmjn4ej4zu495939te32uwqf2zvzq65464ej7kdx5pzx5wxrugplrhqhe")
+    client.call("listpeers")
+    client.call("listinvoices")
 
-  //  call("getinfo")
-  //  call("help")
+    client.call("getinfo")
+    client.call("help")
 }

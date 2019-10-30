@@ -2,10 +2,18 @@ package com.mathbot.lightning
 
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
-case class Request(method: String, id: Int, params: Array[String] = Array.empty[String])
+sealed trait Req {
+
+  def method: String
+  def id: Int
+}
+
+case class Request(method: String, id: Int) extends Req
+case class RequestWithParams(method: String, id: Int, params: Array[String]) extends Req
 
 trait MyJsonProtocol extends DefaultJsonProtocol {
-  implicit val getinfoFormat: RootJsonFormat[Request] = jsonFormat3(Request)
+  implicit val formatRequestWithParams: RootJsonFormat[RequestWithParams] = jsonFormat3(RequestWithParams)
+  implicit val formatRequest: RootJsonFormat[Request] = jsonFormat2(Request)
 }
 
 trait Response[T] {
