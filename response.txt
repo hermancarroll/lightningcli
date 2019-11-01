@@ -1,3 +1,4 @@
+# https://lightning.readthedocs.io/
 {"jsonrpc":"2.0","id":0,"result":{"payments":[{"id":14,"payment_hash":"eb396c09c3af9c6660a1819d5d59eddf1955c7e1b66264fd0e58643c0958d27d","destination":"03c856d2dbec7454c48f311031f06bb99e3ca1ab15a9b9b35de14e139aa663b463","msatoshi":1000,"amount_msat":"1000msat","msatoshi_sent":1000,"amount_sent_msat":"1000msat","created_at":1572410413,"status":"complete","payment_preimage":"83d70f2848fc3adea1868df8f2ae5765c622f57fd7da728ba48c220884f80b3c","bolt11":"lntb10n1pwmjymupp5avukczwr47wxvc9psxw46k0dmuv4t3lpke3xflgwtpjrcz2c6f7sdqqcqzpgxqyz5vqp6f3s2pj2f38safc75jssv6v4f7nfr436253u06dg4rlzn6a55sh7z0d7y549trhvfzzj488pzlenqwr2j3fjllvwgcwt54xclcvlsqpm62yge"}]} }
 
 {"jsonrpc":"2.0","id":2,"result":{"peers":[{"id":"03236a685d30096b26692dce0cf0fa7c8528bdf61dbf5363a3ef6d5c92733a3016","connected":false,"channels":[{"state":"ONCHAIN","scratch_txid":"159a73c9cfc05a12f12d83e2880051dde5bff730a6f906e003f0caf8889c2afd","owner":"lightning_onchaind","short_channel_id":"1579366x15x0","direction":1,"channel_id":"6204354670e019232d06e990fef84307abeda1f22eef2db67af2261f976f10c6","funding_txid":"c6106f971f26f27ab62def2ef2a1edab0743f8fe90e9062d2319e07046350462","private":false,"funding_allocation_msat":{"03236a685d30096b26692dce0cf0fa7c8528bdf61dbf5363a3ef6d5c92733a3016":0,"033b712d635d8094dc44bb8808f32f37080e5db226001fd5a083bd60a59aa4d3ed":3564010000},"funding_msat":{"03236a685d30096b26692dce0cf0fa7c8528bdf61dbf5363a3ef6d5c92733a3016":"0msat","033b712d635d8094dc44bb8808f32f37080e5db226001fd5a083bd60a59aa4d3ed":"3564010000msat"},"msatoshi_to_us":3085745489,"to_us_msat":"3085745489msat","msatoshi_to_us_min":3073998505,"min_to_us_msat":"3073998505msat","msatoshi_to_us_max":3564010000,"max_to_us_msat":"3564010000msat","msatoshi_total":3564010000,"total_msat":"3564010000msat","dust_limit_satoshis":546,"dust_limit_msat":"546000msat","max_htlc_value_in_flight_msat":18446744073709551615,"max_total_htlc_in_msat":"18446744073709551615msat","their_channel_reserve_satoshis":35640,"their_reserve_msat":"35640000msat","our_channel_reserve_satoshis":35640,"our_reserve_msat":"35640000msat","spendable_msatoshi":3049879489,"spendable_msat":"3049879489msat","htlc_minimum_msat":0,"minimum_htlc_in_msat":"0msat","their_to_self_delay":6,"our_to_self_delay":428,"max_accepted_htlcs":483,"status":["ONCHAIN:Tracking our own unilateral close","ONCHAIN:3 outputs unresolved: in 389 blocks will spend DELAYED_OUTPUT_TO_US (159a73c9cfc05a12f12d83e2880051dde5bff730a6f906e003f0caf8889c2afd:1) using OUR_DELAYED_RETURN_TO_WALLET"],"in_payments_offered":1,"in_msatoshi_offered":11952000,"in_offered_msat":"11952000msat","in_payments_fulfilled":1,"in_msatoshi_fulfilled":11952000,"in_fulfilled_msat":"11952000msat","out_payments_offered":15,"out_msatoshi_offered":506720030,"out_offered_msat":"506720030msat","out_payments_fulfilled":13,"out_msatoshi_fulfilled":490216511,"out_fulfilled_msat":"490216511msat","htlcs":[]}]},{"id":"03c856d2dbec7454c48f311031f06bb99e3ca1ab15a9b9b35de14e139aa663b463","connected":true,"netaddr":["34.201.74.232:9735"],"globalfeatures":"2200","localfeatures":"81","channels":[{"state":"CHANNELD_NORMAL","scratch_txid":"b31f48245ff52a0efc575d5e0156187ed860eabcd18f046d0951b87ba01c52e1","owner":"lightning_channeld","short_channel_id":"1584171x79x0","direction":0,"channel_id":"8a849171999dc8288c49f13b977f56670527bcad3932f0416c4466a47e1286a1","funding_txid":"a186127ea466446c41f03239adbc270567567f973bf1498c28c89d997191848a","private":false,"funding_allocation_msat":{"03c856d2dbec7454c48f311031f06bb99e3ca1ab15a9b9b35de14e139aa663b463":0,"033b712d635d8094dc44bb8808f32f37080e5db226001fd5a083bd60a59aa4d3ed":1025592000},"funding_msat":{"03c856d2dbec7454c48f311031f06bb99e3ca1ab15a9b9b35de14e139aa663b463":"0msat","033b712d635d8094dc44bb8808f32f37080e5db226001fd5a083bd60a59aa4d3ed":"1025592000msat"},"msatoshi_to_us":1025571000,"to_us_msat":"1025571000msat","msatoshi_to_us_min":1025571000,"min_to_us_msat":"1025571000msat","msatoshi_to_us_max":1025592000,"max_to_us_msat":"1025592000msat","msatoshi_total":1025592000,"total_msat":"1025592000msat","dust_limit_satoshis":546,"dust_limit_msat":"546000msat","max_htlc_value_in_flight_msat":18446744073709551615,"max_total_htlc_in_msat":"18446744073709551615msat","their_channel_reserve_satoshis":10255,"their_reserve_msat":"10255000msat","our_channel_reserve_satoshis":10255,"our_reserve_msat":"10255000msat","spendable_msatoshi":1015090000,"spendable_msat":"1015090000msat","htlc_minimum_msat":0,"minimum_htlc_in_msat":"0msat","their_to_self_delay":6,"our_to_self_delay":144,"max_accepted_htlcs":483,"status":["CHANNELD_NORMAL:Funding transaction locked. Channel announced."],"in_payments_offered":0,"in_msatoshi_offered":0,"in_offered_msat":"0msat","in_payments_fulfilled":0,"in_msatoshi_fulfilled":0,"in_fulfilled_msat":"0msat","out_payments_offered":3,"out_msatoshi_offered":21000,"out_offered_msat":"21000msat","out_payments_fulfilled":3,"out_msatoshi_fulfilled":21000,"out_fulfilled_msat":"21000msat","htlcs":[]}]}]} }
@@ -9,3 +10,53 @@
 
 
 {"jsonrpc":"2.0","id":0,"error":{"code":-32602,"message":"Invalid bolt11: Bad bech32 string"}}
+
+
+
+# decodepay
+
+{
+   "currency": "bc",
+   "created_at": 1572566728,
+   "expiry": 600,
+   "payee": "03902356d26efdc0812726c31a1a2e0d721f26063dd252ac89ded8280037e9ece8",
+   "msatoshi": 1000000,
+   "amount_msat": "1000000msat",
+   "description": "Feed Chickens @ pollofeed.com",
+   "min_final_cltv_expiry": 10,
+   "routes": [
+      [
+         {
+            "pubkey": "03b50e9c8973aa0104e4cbb3365b9dc81713159a6229f4d41875fd9b3246a92217",
+            "short_channel_id": "566342x628x0",
+            "fee_base_msat": 1000,
+            "fee_proportional_millionths": 1,
+            "cltv_expiry_delta": 144
+         }
+      ]
+   ],
+   "payment_hash": "e384fe5b95cf1e3e5985788ce33dc2a09e57738c5e95b7b53517b459920fb6cc",
+   "signature": "304402207c025c6180f366814fd19e998f0a27871ec9797cd2f3f0d82fcb7931f3aad805022061bfc3e84c70c904f1c3b960074531f678a36a253f1bd42742bdf1b592b0ff77"
+}
+
+# decodepay
+
+{
+   "currency": "bc",
+   "created_at": 1572567175,
+   "expiry": 1200,
+   "payee": "0254ff808f53b2f8c45e74b70430f336c6c76ba2f4af289f48d6086ae6e60462d3",
+   "msatoshi": 581238000,
+   "amount_msat": "581238000msat",
+   "description": "Bitrefill c2b6313b-5ad1-49bd-8f6e-b8fdaf066477",
+   "min_final_cltv_expiry": 9,
+   "fallbacks": [
+      {
+         "type": "P2SH",
+         "addr": "3PAC4woGEk5XAZDND6dybjac6KVnmpFJBw",
+         "hex": "a914eb7e57472de91f13a22211b2f18c611377ee8cc887"
+      }
+   ],
+   "payment_hash": "1618c69c3f17f2a8448abe60c7673330b22503e293b2e99325224c893a4731be",
+   "signature": "30440220705b52e40438af915b91f79e7feddba07756200855ca883cf9d9b8edbd85402b02201f90746e92bcbfcbc4ce17c3ee96a452258c5df46a64683c6c4a2fbd19a442bd"
+}

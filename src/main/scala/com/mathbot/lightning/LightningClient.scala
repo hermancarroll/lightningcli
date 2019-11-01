@@ -136,13 +136,13 @@ object LightningClientApp extends App {
 
 //  client.autoCleanInvoice()
 
-  client.listPayments(
-    "lntb10n1pwmjymupp5avukczwr47wxvc9psxw46k0dmuv4t3lpke3xflgwtpjrcz2c6f7sdqqcqzpgxqyz5vqp6f3s2pj2f38safc75jssv6v4f7nfr436253u06dg4rlzn6a55sh7z0d7y549trhvfzzj488pzlenqwr2j3fjllvwgcwt54xclcvlsqpm62yge")
+//  client.listPayments(
+//    "lntb10n1pwmjymupp5avukczwr47wxvc9psxw46k0dmuv4t3lpke3xflgwtpjrcz2c6f7sdqqcqzpgxqyz5vqp6f3s2pj2f38safc75jssv6v4f7nfr436253u06dg4rlzn6a55sh7z0d7y549trhvfzzj488pzlenqwr2j3fjllvwgcwt54xclcvlsqpm62yge")
   client.pay(
-    "lntb10n1pwmj9d6pp525qz9jduxkwjphkc5xvg7vv6xdyu5s95d0q4n57maes64ft5s6sqdqqcqzpgxqyz5vqnlwyv2zwunl7dc538wh7mgc5g36p92f5afx2926442y5kzp7zvdptu86nldnw5jagguzsurwvmaj7jslauk8zseaqvsdjqwmnrp749qq47fvhn")
-  client.listPeers()
-  client.listInvoices()
-  client.getinfo
-  client.help()
-  client.close()
+    "lntb10n1pwmh25kpp523efykh8d7k3euamm3u45yhsdz2q0hnsx7g7q7c0s6phc5zmdhlsdqqcqzpgxqyz5vqqtefv45wprr8vht6k2zk62896vcfam508ygc02fy89pe9zgm44zp9x4k6u2llqwh2w45dcxltnvemdl52gfa02npkxndtdpls4te4ysppys5kv")
+//  client.listPeers()
+//  client.listInvoices()
+//  client.getinfo
+//  client.help()
+//  client.close()
 }
